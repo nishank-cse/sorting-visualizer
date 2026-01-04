@@ -1,0 +1,194 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+/* ====================== */
+/* Base + Theme Styles    */
+/* ====================== */
+
+body {
+  background: radial-gradient(circle at top left, #1a1a2e, #0f0c29, #000);
+  color: #fff;
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+.visualizer-wrapper {
+  text-align: center;
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+/* ====================== */
+/* Header                 */
+/* ====================== */
+header h1 {
+  font-size: 2.5rem;
+  background: linear-gradient(90deg, #00ffff, #ff00ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 2px;
+  margin-bottom: 0.3rem;
+}
+
+header p {
+  opacity: 0.8;
+  font-size: 1rem;
+  margin-top: 0;
+}
+
+/* ====================== */
+/* Controls Section       */
+/* ====================== */
+.controls {
+  margin: 2rem auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+}
+
+/* Shared glass effect button */
+.glass-btn {
+  padding: 0.8rem 1.5rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  backdrop-filter: blur(5px);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.glass-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 15px #00ffff;
+  transform: translateY(-2px);
+}
+
+/* ====================== */
+/* Dropdown Styling Fix   */
+/* ====================== */
+select.glass-btn {
+  appearance: none;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border-radius: 8px;
+  padding: 0.8rem 1.5rem;
+  cursor: pointer;
+  outline: none;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(5px);
+  transition: all 0.3s ease;
+  min-width: 160px;
+  text-align: center;
+}
+
+/* Custom dropdown arrow */
+select.glass-btn {
+  background-image: linear-gradient(transparent, transparent),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' fill='white' viewBox='0 0 24 24'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1rem;
+}
+
+/* Dropdown options styling */
+select.glass-btn option {
+  background-color: #0f0c29;
+  color: #fff;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+}
+
+/* Glow when focused */
+select.glass-btn:focus {
+  border: 1px solid #00ffff;
+  box-shadow: 0 0 10px #00ffff;
+}
+
+/* Highlight hovered and selected items */
+select.glass-btn option:hover,
+select.glass-btn option:checked {
+  background: rgba(0, 255, 255, 0.3);
+}
+
+/* ====================== */
+/* Slider Styling         */
+/* ====================== */
+input[type="range"] {
+  accent-color: #00ffff;
+  height: 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* ====================== */
+/* Bars Container         */
+/* ====================== */
+.bar-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  height: 65vh;
+  width: 90%;
+  margin: 0 auto;
+}
+
+.bar {
+  width: 8px;
+  margin: 2px;
+  border-radius: 4px;
+  transition: height 0.2s ease;
+}
+
+/* ====================== */
+/* Footer                 */
+/* ====================== */
+footer {
+  margin-top: 2rem;
+  font-size: 0.9rem;
+  opacity: 0.6;
+}
+
+/* ====================== */
+/* Responsive Adjustments */
+/* ====================== */
+@media (max-width: 768px) {
+  header h1 {
+    font-size: 1.8rem;
+  }
+
+  .controls {
+    flex-direction: column;
+  }
+
+  .bar {
+    width: 5px;
+  }
+
+  select.glass-btn,
+  .glass-btn {
+    width: 80%;
+  }
+}
+/* Remove extra space caused by footer */
+.no-footer {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 100vh;
+}
+
+/* Reduce space below bars for full fit */
+.bar-container.small-gap {
+  height: 55vh;
+}
+
+/* Compact header for perfect fit */
+header {
+  margin-bottom: 0.8rem;
+}
