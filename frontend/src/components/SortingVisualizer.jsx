@@ -38,8 +38,9 @@ const SortingVisualizer = () => {
   const generateNewArray = useCallback(() => {
     clearAllTimeouts();
     setSorting(false);
-    const newArr = Array.from({ length: arraySize }, () =>
-      Math.floor(Math.random() * 300) + 20
+    const newArr = Array.from(
+      { length: arraySize },
+      () => Math.floor(Math.random() * 300) + 20,
     );
     setArray(newArr);
   }, [arraySize, clearAllTimeouts]);
@@ -47,9 +48,18 @@ const SortingVisualizer = () => {
   const fetchHistory = useCallback(async () => {
     try {
       const res = await axios.get(`${API_URL}/api/runs`);
-      setHistory(res.data);
+
+      // ✅ ensure array
+      const data = Array.isArray(res.data)
+        ? res.data
+        : Array.isArray(res.data.runs)
+          ? res.data.runs
+          : [];
+
+      setHistory(data);
     } catch (err) {
       console.error("Error fetching history:", err);
+      setHistory([]); // prevent crash
     }
   }, []);
 
@@ -156,11 +166,12 @@ const SortingVisualizer = () => {
 
       <h3>History (Backend Saved Runs):</h3>
       <ul>
-        {history.map((run) => (
-          <li key={run._id}>
-            {run.algorithm} - {run.timeTaken}ms - Array Size: {run.arraySize}
-          </li>
-        ))}
+        {Array.isArray(history) &&
+          history.map((run) => (
+            <li key={run._id}>
+              {run.algorithm} - {run.timeTaken}ms - Array Size: {run.arraySize}
+            </li>
+          ))}
       </ul>
     </div>
   );
