@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
-import axios from "axios"; // ← added for backend
+import axios from "axios";
 import { bubbleSort } from "./algorithms/bubbleSort";
 import { selectionSort } from "./algorithms/selectionSort";
 import { insertionSort } from "./algorithms/insertionSort";
@@ -9,13 +9,15 @@ import { quickSort } from "./algorithms/quickSort";
 import { heapSort } from "./algorithms/heapSort";
 import "../styles/theme.css";
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const SortingVisualizer = () => {
   const [array, setArray] = useState([]);
-  const [speed, setSpeed] = useState(50);
+  const [speed] = useState(100);
   const [arraySize, setArraySize] = useState(30);
   const [sorting, setSorting] = useState(false);
   const [algorithm, setAlgorithm] = useState("bubble");
-  const [history, setHistory] = useState([]); // ← added to show backend history
+  const [history, setHistory] = useState([]);
 
   const timeoutsRef = useRef([]);
 
@@ -28,25 +30,46 @@ const SortingVisualizer = () => {
     heap: heapSort,
   };
 
-  useEffect(() => {
-    generateNewArray();
-    fetchHistory(); // ← fetch backend history
-    return () => clearAllTimeouts();
-  }, [arraySize]);
-
-  const clearAllTimeouts = () => {
+  const clearAllTimeouts = useCallback(() => {
     timeoutsRef.current.forEach((t) => clearTimeout(t));
     timeoutsRef.current = [];
-  };
+  }, []);
 
-  const generateNewArray = () => {
+  const generateNewArray = useCallback(() => {
     clearAllTimeouts();
     setSorting(false);
     const newArr = Array.from({ length: arraySize }, () =>
       Math.floor(Math.random() * 300) + 20
     );
     setArray(newArr);
+  }, [arraySize, clearAllTimeouts]);
+
+  const fetchHistory = useCallback(async () => {
+    try {
+      const res = await axios.get(`${API_URL}/api/runs`);
+      setHistory(res.data);
+    } catch (err) {
+      console.error("Error fetching history:", err);
+    }
+  }, []);
+
+  const saveRun = async (algo, timeTaken, size) => {
+    try {
+      await axios.post(`${API_URL}/api/runs`, {
+        algorithm: algo,
+        timeTaken,
+        arraySize: size,
+      });
+    } catch (err) {
+      console.error("Error saving run:", err);
+    }
   };
+
+  useEffect(() => {
+    generateNewArray();
+    fetchHistory();
+    return () => clearAllTimeouts();
+  }, [arraySize, generateNewArray, fetchHistory, clearAllTimeouts]);
 
   const handleSort = async () => {
     setSorting(true);
@@ -54,47 +77,26 @@ const SortingVisualizer = () => {
     const animations = sortFn(array);
     let arr = [...array];
 
-    for (let step of animations) {
+    animations.forEach((step, index) => {
       const timeout = setTimeout(() => {
         if (step.type === "swap") {
           const [i, j] = step.indices;
           [arr[i], arr[j]] = [arr[j], arr[i]];
           setArray([...arr]);
         }
-      }, speed * animations.indexOf(step));
+      }, speed * index);
+
       timeoutsRef.current.push(timeout);
-    }
+    });
 
     const totalTime = speed * animations.length + 50;
     const endTimeout = setTimeout(async () => {
       setSorting(false);
-      await saveRun(algorithm, totalTime, array.length); // ← save to backend
-      fetchHistory(); // refresh history
+      await saveRun(algorithm, totalTime, array.length);
+      fetchHistory();
     }, totalTime);
+
     timeoutsRef.current.push(endTimeout);
-  };
-
-  // ← Save sorting run to backend
-  const saveRun = async (algorithm, timeTaken, arraySize) => {
-    try {
-      await axios.post("http://localhost:5000/api/runs", {
-        algorithm,
-        timeTaken,
-        arraySize,
-      });
-    } catch (err) {
-      console.error("Error saving run:", err);
-    }
-  };
-
-  // ← Fetch saved runs from backend
-  const fetchHistory = async () => {
-    try {
-      const res = await axios.get("http://localhost:5000/api/runs");
-      setHistory(res.data);
-    } catch (err) {
-      console.error("Error fetching history:", err);
-    }
   };
 
   return (
