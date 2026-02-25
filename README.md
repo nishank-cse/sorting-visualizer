@@ -4,7 +4,7 @@ A Full-Stack Sorting Algorithm Visualizer built with **React**, **Node.js**, **E
 
 ## 🌐 Live Deployment
 
-🔗 Frontend: https://sorting-visualizer-35pvaxwyq-nishank-mukhijas-projects.vercel.app/  
+🔗 Frontend: https://sorting-visualizer-g1mmdi313-nishank-mukhijas-projects.vercel.app/  
 
 🔗 Backend Base URL: https://sorting-backend-sppc.onrender.com  
 
